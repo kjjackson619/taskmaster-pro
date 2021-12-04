@@ -17,6 +17,10 @@ var createTask = function (taskText, taskDate, taskList) {
   $("#list-" + taskList).append(taskLi);
 };
 
+$("#modalDueDate").datepicker({
+  minDate: 1
+});
+
 var loadTasks = function () {
   tasks = JSON.parse(localStorage.getItem("tasks"));
 
@@ -165,7 +169,7 @@ $(".list-group").on("click", "p", function () {
 });
 
 // editable field was un-focused
-$(".list-group").on("blur", "textarea", function () {
+$(".list-group").on("change", "input[type='text']", function () {
   // get current value of textarea
   var text = $(this).val();
 
@@ -204,6 +208,13 @@ $(".list-group").on("click", "span", function () {
     .addClass("form-control")
     .val(date);
   $(this).replaceWith(dateInput);
+
+  dataInput.datepicker({
+    minDate: 1,
+    onClose: function () {
+      $(this).trigger("change");
+    }
+  });
 
   // automatically bring up the calendar
   dateInput.trigger("focus");
