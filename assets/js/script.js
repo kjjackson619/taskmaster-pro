@@ -13,6 +13,8 @@ var createTask = function (taskText, taskDate, taskList) {
   // append span and p element to parent li
   taskLi.append(taskSpan, taskP);
 
+  auditTask(taskLi);
+
   // append to ul list on the page
   $("#list-" + taskList).append(taskLi);
 };
@@ -229,6 +231,7 @@ $(".list-group").on("change", "input[type='text']", function () {
     .closest(".list-group")
     .attr("id")
     .replace("list-", "");
+
   var index = $(this)
     .closest(".list-group-item")
     .index();
@@ -242,6 +245,8 @@ $(".list-group").on("change", "input[type='text']", function () {
     .addClass("badge badge-primary badge-pill")
     .text(date);
   $(this).replaceWith(taskSpan);
+
+  auditTask($(taskSpan).closest(".list-group-item"));
 });
 
 // remove all tasks
@@ -253,6 +258,22 @@ $("#remove-tasks").on("click", function () {
   console.log(tasks);
   saveTasks();
 });
+
+var auditTask = function (taskEl) {
+  var date = $(taskEl).find("span").text().trim();
+
+
+  var time = moment(date, "L").set("hour", 17);
+
+  $(taskEl).removeClass("list-group-item-warning list-group-item-danger");
+
+  if (moment().isAfter(time)) {
+    $(taskEl).addClass("list-group-item-danger");
+  }
+  else if (Math.abs(moment().diff(time, "days")) <= 2) {
+    $(taskEl).addClass("list-group-item-warning");
+  }
+};
 
 // load tasks for the first time
 loadTasks();
